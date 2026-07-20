@@ -3,6 +3,88 @@ import './App.css'
 
 function App() {
 
+  const API_KEY = import.meta.env.VITE_OMDB_API_KEY
+
+
+  const [searchTerm, setSearchTerm] = useState("")
+  const [movies, setMovies] = useState([])
+  const [selectedMovie, setSelectedMovie] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    setError("")
+
+    try {
+      const response = await fetch(
+        `http://www.omdbapi.com/?i=tt3896198&apikey=${API_KEY}&s=${data.imdbID}`
+      )
+      const data = await response.json()
+
+      if (data.Response === "False") {
+        setError(data.Error)
+        setMovies([])
+        return
+      }
+      setMovies(data.Search)
+
+    } catch (error) {
+      setError("Something went wrong, Please try again.")
+    } finally {
+      setLoading(false)
+    }
+
+
+  }
+
+
+
+  return (
+    <div>
+      <h1>Movie Searcher</h1>
+
+      <div>
+        <form onSubmit={handleSubmit}>
+          <input type="text"
+            value={searchTerm}
+            placeholder='Enter Movie Title'
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <button>Search</button>
+        </form>
+
+        <div>
+          {
+            selectedMovie ? (
+              <div>
+                <h2>{selectedMovie.Title}</h2>
+                <img src={selectedMovie.Poster} alt={selectedMovie.Title} />
+                <p>{selectedMovie.Year}</p>
+              </div>
+
+            ) : (
+              movies.map((movie) => (
+                <div key={movie.imdbID}>
+                  {movie.Poster !== "N/A" ? (
+                    <img src={movie.Poster} alt={movie.Title} onClick={() => setSelectedMovie(movie)} />
+                  ) : (
+                    <p>No Poster Available</p>
+                  )}
+                </div>
+              ))
+            )
+          }
+        </div>
+      </div>
+    </div>
+  )
+
 }
 
 export default App
+
+
+// http://www.omdbapi.com/?i=tt3896198&apikey=35937a8d
+
