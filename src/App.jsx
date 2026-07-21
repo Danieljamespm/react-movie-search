@@ -19,7 +19,7 @@ function App() {
 
     try {
       const response = await fetch(
-        `http://www.omdbapi.com/?i=tt3896198&apikey=${API_KEY}&s=${data.imdbID}`
+        `http://www.omdbapi.com/?apikey=${API_KEY}&s=${searchTerm}`
       )
       const data = await response.json()
 
@@ -29,14 +29,40 @@ function App() {
         return
       }
       setMovies(data.Search)
+      setSelectedMovie(null)
 
     } catch (error) {
       setError("Something went wrong, Please try again.")
     } finally {
       setLoading(false)
+      setSearchTerm('')
+
     }
 
 
+  }
+
+  const fetchMovieDetails = async (imdbID) => {
+    setLoading(true)
+    setError("")
+
+    try {
+      const response = await fetch(
+        `http://www.omdbapi.com/?apikey=${API_KEY}&i=${imdbID}`
+      )
+      const data = await response.json()
+
+      if (data.Response === "False") {
+        setError(data.Error)
+        setMovies([])
+        return
+      }
+      setSelectedMovie(data)
+    } catch (error) {
+      setError("Something went wrong loading movie details")
+    } finally {
+      setLoading(false)
+    }
   }
 
 
@@ -60,15 +86,18 @@ function App() {
             selectedMovie ? (
               <div>
                 <h2>{selectedMovie.Title}</h2>
-                <img src={selectedMovie.Poster} alt={selectedMovie.Title} />
+                <p>{selectedMovie.Genre}</p>
                 <p>{selectedMovie.Year}</p>
+                <img src={selectedMovie.Poster} alt={selectedMovie.Title} />
+                <p>Actors: {selectedMovie.Actors}</p>
+                <p>Imdb Rating: {selectedMovie.imdbRating}</p>
               </div>
 
             ) : (
               movies.map((movie) => (
                 <div key={movie.imdbID}>
                   {movie.Poster !== "N/A" ? (
-                    <img src={movie.Poster} alt={movie.Title} onClick={() => setSelectedMovie(movie)} />
+                    <img src={movie.Poster} alt={movie.Title} onClick={() => fetchMovieDetails(movie.imdbID)} />
                   ) : (
                     <p>No Poster Available</p>
                   )}
