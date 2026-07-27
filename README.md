@@ -1,16 +1,87 @@
-# React + Vite
+# 🎬 Movie Search App
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A React application that allows users to search for movies using the OMDb API and view detailed information about each movie.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- 🔍 Search for movies by title
+- 🎞️ Display movie posters in a responsive grid
+- 📖 View detailed information for each movie
+- ⚡ Loading indicators while fetching data
+- ❌ Error handling for invalid searches and network issues
+- 📱 Responsive layout
 
-## React Compiler
+## Built With
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React
+- JavaScript
+- CSS Grid
+- Vite
+- OMDb API
 
-## Expanding the Oxlint configuration
+## Screenshots
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+(Add screenshots here later)
+
+## Installation
+
+Clone the repository:
+
+```bash
+git clone https://github.com/YourUsername/react-movie-search.git
+```
+
+Navigate into the project:
+
+```bash
+cd react-movie-search
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+## Environment Variables
+
+Create a `.env` file in the project root and add:
+
+```env
+VITE_OMDB_API_KEY=your_api_key_here
+```
+
+You can obtain a free API key from:
+
+https://www.omdbapi.com/apikey.aspx
+
+## What I Learned
+
+During this project I practiced:
+
+- Working with REST APIs
+- Making asynchronous requests using `fetch`
+- Managing React state with `useState`
+- Conditional rendering
+- Loading and error states
+- Responsive layouts using CSS Grid
+- Organizing reusable React components
+
+## Future Improvements
+
+- Search history
+- Favorite movies
+- Pagination
+- Filter by year or genre
+- Dark mode
+- Animations and transitions
+
+## License
+
+This project was mainly for learning and solidifying React and API fecth concepts
