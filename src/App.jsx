@@ -19,7 +19,7 @@ function App() {
 
     try {
       const response = await fetch(
-        `http://www.omdbapi.com/?apikey=${API_KEY}&s=${searchTerm}`
+        `https://www.omdbapi.com/?apikey=${API_KEY}&s=${encodeURIComponent(searchTerm)}`
       )
       const data = await response.json()
 
@@ -32,6 +32,7 @@ function App() {
       setSelectedMovie(null)
 
     } catch (error) {
+      console.error("search error:", error)
       setError("Something went wrong, Please try again.")
     } finally {
       setLoading(false)
@@ -48,13 +49,13 @@ function App() {
 
     try {
       const response = await fetch(
-        `http://www.omdbapi.com/?apikey=${API_KEY}&i=${imdbID}`
+        `https://www.omdbapi.com/?apikey=${API_KEY}&i=${imdbID}`
       )
       const data = await response.json()
 
       if (data.Response === "False") {
         setError(data.Error)
-        setMovies([])
+
         return
       }
       setSelectedMovie(data)
@@ -68,46 +69,127 @@ function App() {
 
 
   return (
-    <div>
-      <h1>Movie Searcher</h1>
+    <main className="app">
+      <header className="hero">
+        <p className="eyebrow">Discover your next favorite</p>
+        <h1>Movie Searcher</h1>
+        <p className="hero-description">
+          Search for movies and explore their cast, genre, ratings, and more.
+        </p>
 
-      <div>
-        <form onSubmit={handleSubmit}>
-          <input type="text"
+        <form className="search-form" onSubmit={handleSubmit}>
+          <input
+            type="text"
             value={searchTerm}
-            placeholder='Enter Movie Title'
+            placeholder="Enter a movie title"
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <button>Search</button>
-        </form>
 
-        <div>
-          {
-            selectedMovie ? (
-              <div>
-                <h2>{selectedMovie.Title}</h2>
-                <p>{selectedMovie.Genre}</p>
-                <p>{selectedMovie.Year}</p>
-                <img src={selectedMovie.Poster} alt={selectedMovie.Title} />
-                <p>Actors: {selectedMovie.Actors}</p>
-                <p>Imdb Rating: {selectedMovie.imdbRating}</p>
+          <button disabled={loading || !searchTerm.trim()}>
+            {loading ? "Searching..." : "Search"}
+          </button>
+        </form>
+      </header>
+
+      <section className="content">
+        {error && <p className="error-message">{error}</p>}
+
+        {loading && <p className="loading-message">Loading...</p>}
+
+        {!loading && selectedMovie ? (
+          <article className="movie-details">
+            <button
+              type='button'
+              className="back-button"
+              onClick={() => setSelectedMovie(null)}
+            >
+              ← Back to results
+            </button>
+
+            <div className="details-layout">
+              <div className="details-poster">
+                {selectedMovie.Poster !== "N/A" ? (
+                  <img
+                    src={selectedMovie.Poster}
+                    alt={`${selectedMovie.Title} poster`}
+                  />
+                ) : (
+                  <div className="poster-placeholder">
+                    No Poster Available
+                  </div>
+                )}
               </div>
 
-            ) : (
-              movies.map((movie) => (
-                <div key={movie.imdbID}>
-                  {movie.Poster !== "N/A" ? (
-                    <img src={movie.Poster} alt={movie.Title} onClick={() => fetchMovieDetails(movie.imdbID)} />
-                  ) : (
-                    <p>No Poster Available</p>
-                  )}
+              <div className="details-information">
+                <p className="movie-type">{selectedMovie.Type}</p>
+
+                <h2>{selectedMovie.Title}</h2>
+
+                <div className="movie-meta">
+                  <span>{selectedMovie.Year}</span>
+                  <span>{selectedMovie.Runtime}</span>
+                  <span>{selectedMovie.Rated}</span>
                 </div>
-              ))
-            )
-          }
-        </div>
-      </div>
-    </div>
+
+                <p className="movie-plot">{selectedMovie.Plot}</p>
+
+                <div className="detail-row">
+                  <span>Genre</span>
+                  <p>{selectedMovie.Genre}</p>
+                </div>
+
+                <div className="detail-row">
+                  <span>Actors</span>
+                  <p>{selectedMovie.Actors}</p>
+                </div>
+
+                <div className="detail-row">
+                  <span>Director</span>
+                  <p>{selectedMovie.Director}</p>
+                </div>
+
+                <div className="rating">
+                  <strong>IMDb</strong>
+                  <span>{selectedMovie.imdbRating} / 10</span>
+                </div>
+              </div>
+            </div>
+          </article>
+        ) : (
+          !loading &&
+          movies.length > 0 && (
+            <div className="movie-grid">
+              {movies.map((movie) => (
+                <article
+                  className="movie-card"
+                  key={movie.imdbID}
+                  onClick={() => fetchMovieDetails(movie.imdbID)}
+                >
+                  <div className="poster-container">
+                    {movie.Poster !== "N/A" ? (
+                      <img
+                        src={movie.Poster}
+                        alt={`${movie.Title} poster`}
+                      />
+                    ) : (
+                      <div className="poster-placeholder">
+                        No Poster Available
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="movie-card-content">
+                    <p className="movie-type">{movie.Type}</p>
+                    <h2>{movie.Title}</h2>
+                    <p className="movie-year">{movie.Year}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          )
+        )}
+      </section>
+    </main>
   )
 
 }
